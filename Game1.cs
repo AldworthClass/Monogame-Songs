@@ -14,7 +14,8 @@ namespace Monogame_Songs
         MouseState mouseState, prevMouseState;
         SpriteFont displayFont;
         Song tngSong;
-        float volume = 0.8f;
+        TimeSpan songTime;
+        TimeSpan currentTime;
 
         string songStatus = "", songName;
         int time;
@@ -47,7 +48,7 @@ namespace Monogame_Songs
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _graphics.PreferredBackBufferWidth = 265;
+            _graphics.PreferredBackBufferWidth = 300;
             _graphics.PreferredBackBufferHeight = 300;
             _graphics.ApplyChanges();
             base.Initialize();
@@ -59,6 +60,8 @@ namespace Monogame_Songs
 
             // TODO: use this.Content to load your game content here
             tngSong = Content.Load<Song>("tng_intro_theme");
+            songName = tngSong.Name;
+            songTime = tngSong.Duration;
 
             displayFont = Content.Load<SpriteFont>("DisplayFont");
 
@@ -103,7 +106,10 @@ namespace Monogame_Songs
             {
                 if (restartButtonRect.Contains(mouseState.Position))
                 {
-                    songStatus = "Restart";
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(tngSong);
+
+                    songStatus = "Playing";
                 }
                 else if(playButtonRect.Contains(mouseState.Position))
                 {
@@ -152,12 +158,18 @@ namespace Monogame_Songs
 
             }
 
+            currentTime = MediaPlayer.PlayPosition;
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            // This will display the song time
+            
+            
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
@@ -171,10 +183,26 @@ namespace Monogame_Songs
             _spriteBatch.Draw(volumeUpButtonTexture, volumeUpButtonRect, Color.White);
             _spriteBatch.Draw(volumeDownButtonTexture, volumeDownButtonRect, Color.White);
 
+
+            _spriteBatch.DrawString(displayFont, $"{songName} {GetHumanReadableTime(currentTime)}/{GetHumanReadableTime(songTime)}", new Vector2(10, 160), Color.White);
             _spriteBatch.DrawString(displayFont, $"{songStatus} Volume {Math.Round(MediaPlayer.Volume * 10)}" , new Vector2(10, 10), Color.Black);
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
+
+        // Used to get a readable time for the song.
+        public string GetHumanReadableTime(TimeSpan timeSpan)
+        {
+            int minutes = timeSpan.Minutes;
+            int seconds = timeSpan.Seconds;
+
+            if (seconds < 10)
+                return minutes + ":0" + seconds;
+            else
+                return minutes + ":" + seconds;
+        }
+
+
     }
 }

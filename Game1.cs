@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System;
 
 namespace Monogame_Songs
 {
@@ -13,6 +14,7 @@ namespace Monogame_Songs
         MouseState mouseState, prevMouseState;
         SpriteFont displayFont;
         Song tngSong;
+        float volume = 0.8f;
 
         string songStatus = "", songName;
         int time;
@@ -105,31 +107,47 @@ namespace Monogame_Songs
                 }
                 else if(playButtonRect.Contains(mouseState.Position))
                 {
-                    songStatus = "Play";
+                    if (MediaPlayer.State == MediaState.Paused)
+                        MediaPlayer.Resume();
+                    else
+                        MediaPlayer.Play(tngSong);
+
+                    songStatus = "Playing";
                 }
                 else if (pauseButtonRect.Contains(mouseState.Position))
                 {
-                    songStatus = "Pause";
+                    songStatus = "Paused";
+                    if (MediaPlayer.State == MediaState.Playing)
+                        MediaPlayer.Pause();
+                    else if (MediaPlayer.State == MediaState.Paused)
+                        MediaPlayer.Resume();
                 }
                 else if (stopButtonRect.Contains(mouseState.Position))
                 {
-                    songStatus = "Stop";
+                    songStatus = "Stoped";
+                    MediaPlayer.Stop();
                 }
                 else if (muteButtonRect.Contains(mouseState.Position))
                 {
                     songStatus = "Mute";
+                    MediaPlayer.IsMuted = true;
                 }
                 else if (unMuteButtonRect.Contains(mouseState.Position))
                 {
                     songStatus = "Unmute";
+                    MediaPlayer.IsMuted = false;
                 }
                 else if (volumeDownButtonRect.Contains(mouseState.Position))
                 {
                     songStatus = "Volume Down";
+                    if (MediaPlayer.Volume > 0)
+                        MediaPlayer.Volume -= 0.1f;
                 }
                 else if (volumeUpButtonRect.Contains(mouseState.Position))
                 {
                     songStatus = "Volume Up";
+                    if (MediaPlayer.Volume < 0.9)
+                        MediaPlayer.Volume += 0.1f;
                 }
 
             }
@@ -153,7 +171,7 @@ namespace Monogame_Songs
             _spriteBatch.Draw(volumeUpButtonTexture, volumeUpButtonRect, Color.White);
             _spriteBatch.Draw(volumeDownButtonTexture, volumeDownButtonRect, Color.White);
 
-            _spriteBatch.DrawString(displayFont, songStatus, new Vector2(10, 10), Color.Black);
+            _spriteBatch.DrawString(displayFont, $"{songStatus} Volume {Math.Round(MediaPlayer.Volume * 10)}" , new Vector2(10, 10), Color.Black);
             _spriteBatch.End();
 
             base.Draw(gameTime);

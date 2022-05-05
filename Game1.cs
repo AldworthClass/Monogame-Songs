@@ -10,9 +10,11 @@ namespace Monogame_Songs
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        MouseState mouseState, prevMouseState;
+        SpriteFont displayFont;
         Song tngSong;
 
-        string songStatus;
+        string songStatus = "", songName;
         int time;
         int songLength;
 
@@ -55,30 +57,82 @@ namespace Monogame_Songs
 
             // TODO: use this.Content to load your game content here
             tngSong = Content.Load<Song>("tng_intro_theme");
+
+            displayFont = Content.Load<SpriteFont>("DisplayFont");
+
             playButtonTexture = Content.Load<Texture2D>("play_button");
             playButtonRect = new Rectangle(140, 40, 50, 50);
+            
             stopButtonTexture = Content.Load<Texture2D>("stop_button");
             stopButtonRect = new Rectangle(75, 40, 50, 50);
+            
             muteButtonTexture = Content.Load<Texture2D>("mute_button");
             muteButtonRect = new Rectangle(10, 105, 50, 50);
+            
             unMuteButtonTexture = Content.Load<Texture2D>("unmute_button");
             unMuteButtonRect = new Rectangle(205, 105, 50, 50);
+            
             pauseButtonTexture = Content.Load<Texture2D>("pause_button");
             pauseButtonRect = new Rectangle(205, 40, 50, 50);
+            
             volumeUpButtonTexture = Content.Load<Texture2D>("volume_up_button");
             volumeUpButtonRect = new Rectangle(140, 105, 50, 50);
+            
             volumeDownButtonTexture = Content.Load<Texture2D>("volume_down_button");
             volumeDownButtonRect = new Rectangle(75, 105, 50, 50);
+            
             restartButtonTexture = Content.Load<Texture2D>("restart_button");
             restartButtonRect = new Rectangle(10, 40, 50, 50);
         }
 
+
         protected override void Update(GameTime gameTime)
         {
+            prevMouseState = mouseState;
+            mouseState = Mouse.GetState();
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+
+            // Checks for a new mouse click
+            if (mouseState.LeftButton != prevMouseState.LeftButton && mouseState.LeftButton == ButtonState.Released)
+            {
+                if (restartButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Restart";
+                }
+                else if(playButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Play";
+                }
+                else if (pauseButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Pause";
+                }
+                else if (stopButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Stop";
+                }
+                else if (muteButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Mute";
+                }
+                else if (unMuteButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Unmute";
+                }
+                else if (volumeDownButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Volume Down";
+                }
+                else if (volumeUpButtonRect.Contains(mouseState.Position))
+                {
+                    songStatus = "Volume Up";
+                }
+
+            }
 
             base.Update(gameTime);
         }
@@ -99,6 +153,7 @@ namespace Monogame_Songs
             _spriteBatch.Draw(volumeUpButtonTexture, volumeUpButtonRect, Color.White);
             _spriteBatch.Draw(volumeDownButtonTexture, volumeDownButtonRect, Color.White);
 
+            _spriteBatch.DrawString(displayFont, songStatus, new Vector2(10, 10), Color.Black);
             _spriteBatch.End();
 
             base.Draw(gameTime);

@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:play_button.png
 
+#begin restart_button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:restart_button.png
+
 #begin stop_button.png
 /importer:TextureImporter
 /processor:TextureProcessor

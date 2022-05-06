@@ -60,7 +60,10 @@ namespace Monogame_Songs
 
             // TODO: use this.Content to load your game content here
             tngSong = Content.Load<Song>("tng_intro_theme");
+            
+            // Gets the filename
             songName = tngSong.Name;
+            // Gets the length of the song
             songTime = tngSong.Duration;
 
             displayFont = Content.Load<SpriteFont>("DisplayFont");
@@ -101,7 +104,7 @@ namespace Monogame_Songs
 
             // TODO: Add your update logic here
 
-            // Checks for a new mouse click
+            // Checks for a new mouse click, triggers on release
             if (mouseState.LeftButton != prevMouseState.LeftButton && mouseState.LeftButton == ButtonState.Released)
             {
                 if (restartButtonRect.Contains(mouseState.Position))
